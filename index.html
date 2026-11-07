@@ -1,13 +1,872 @@
-<!doctype html>
-<html lang="en">
-  <head>
-    <meta charset="UTF-8" />
-    <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>like-trello</title>
-  </head>
-  <body>
-    <div id="root"></div>
-    <script type="module" src="/src/main.jsx"></script>
-  </body>
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Darutask</title>
+<link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+<style>
+*{margin:0;padding:0;box-sizing:border-box;}
+
+:root {
+  --red: #E8442A;
+  --red-dark: #c93820;
+  --white: #fff;
+  --gray-50: #f8f9fb;
+  --gray-100: #f1f3f7;
+  --gray-200: #e4e8ef;
+  --gray-300: #c8d0dd;
+  --gray-400: #9aa5b8;
+  --gray-600: #6b778e;
+  --gray-800: #2d3748;
+  --gray-900: #1a202c;
+  --font: 'DM Sans', sans-serif;
+}
+
+.logo-img {
+  width: 32px;
+  height: 32px;
+  object-fit: contain;
+  border-radius: 8px;
+}
+
+.logo-img-grande {
+  width: 48px;
+  height: 48px;
+  object-fit: contain;
+}
+
+body { font-family: var(--font); background: var(--gray-50); min-height: 100vh; }
+
+.tela { display: none; }
+.tela.ativa { display: flex; flex-direction: column; min-height: 100vh; }
+
+#telaLogin {
+  background: var(--red);
+  align-items: center;
+  justify-content: center;
+  position: relative;
+}
+.login-footer {
+  position: fixed;
+  bottom: 14px; right: 20px;
+  font-size: 11px;
+  color: rgba(255,255,255,0.45);
+}
+.card-login {
+  background: #fff;
+  border-radius: 10px;
+  padding: 36px 44px 28px;
+  width: 360px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+.login-logo { 
+  margin-bottom: 10px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+.login-brand { font-size: 17px; font-weight: 700; letter-spacing: 1.5px; color: var(--gray-900); margin-bottom: 3px; }
+.login-tag { font-size: 12px; color: var(--gray-400); margin-bottom: 26px; }
+.login-field { width: 100%; margin-bottom: 14px; }
+.login-field label { font-size: 12px; color: var(--gray-800); display: block; margin-bottom: 5px; font-weight: 500; }
+.field-row-lbl { display: flex; justify-content: space-between; align-items: center; margin-bottom: 5px; }
+.field-row-lbl label { margin-bottom: 0; }
+.forgot { font-size: 11px; color: var(--gray-400); cursor: pointer; text-decoration: none; }
+.forgot:hover { text-decoration: underline; }
+.input-icon { position: relative; }
+.input-icon i { position: absolute; left: 10px; top: 50%; transform: translateY(-50%); color: var(--gray-300); font-size: 13px; }
+.input-icon input {
+  width: 100%; padding: 9px 12px 9px 30px;
+  border: 1px solid var(--gray-200);
+  border-radius: 4px; font-size: 13px; color: var(--gray-800);
+  font-family: var(--font); outline: none;
+}
+.input-icon input:focus { border-color: var(--gray-400); }
+.check-row { display: flex; align-items: center; gap: 7px; width: 100%; margin-bottom: 16px; cursor: pointer; }
+.check-row input { accent-color: var(--red); width: 14px; height: 14px; }
+.check-row span { font-size: 12px; color: var(--gray-600); }
+.btn-entrar-login {
+  width: 100%; padding: 10px;
+  background: var(--gray-200); border: none; border-radius: 4px;
+  font-size: 12px; font-weight: 700; letter-spacing: 1px; color: var(--gray-600);
+  cursor: pointer; margin-bottom: 22px; font-family: var(--font);
+  transition: background .2s;
+}
+.btn-entrar-login:hover { background: var(--gray-300); }
+.login-register { font-size: 12px; color: var(--gray-400); margin-bottom: 18px; }
+.login-register a { font-weight: 700; color: var(--gray-800); cursor: pointer; }
+.login-links { display: flex; gap: 18px; font-size: 11px; color: var(--gray-300); }
+.login-links span { display: flex; align-items: center; gap: 4px; cursor: pointer; }
+.login-links span:hover { color: var(--gray-400); }
+
+#telaProjetos { background: var(--red); flex-direction: column; }
+.proj-header {
+  background: #fff;
+  display: flex; align-items: center; justify-content: space-between;
+  padding: 0 24px; height: 52px;
+  border-bottom: 1px solid var(--gray-200);
+}
+.proj-logo { display: flex; align-items: center; gap: 8px; }
+.proj-logo-icon { 
+  display: flex;
+  align-items: center;
+}
+.proj-logo-text { font-size: 15px; font-weight: 700; letter-spacing: 1px; color: var(--gray-900); }
+.proj-search {
+  display: flex; align-items: center; gap: 8px;
+  background: var(--gray-100); border-radius: 6px;
+  padding: 6px 14px; border: 1px solid var(--gray-200);
+}
+.proj-search input {
+  border: none; background: transparent; font-size: 12px; color: var(--gray-800);
+  font-family: var(--font); outline: none; width: 180px;
+}
+.proj-search i { color: var(--gray-400); font-size: 12px; }
+.proj-header-right { display: flex; align-items: center; gap: 12px; }
+.btn-icon-header {
+  background: var(--gray-100); border: 1px solid var(--gray-200);
+  border-radius: 6px; width: 32px; height: 32px;
+  display: flex; align-items: center; justify-content: center;
+  cursor: pointer; color: var(--gray-600); font-size: 13px;
+}
+.btn-icon-header:hover { background: var(--gray-200); }
+
+.proj-body { padding: 24px; flex: 1; }
+.proj-section-top { display: flex; justify-content: space-between; align-items: flex-start; margin-bottom: 20px; }
+.proj-section-title h2 { font-size: 18px; font-weight: 700; color: #fff; }
+.proj-section-title p { font-size: 12px; color: rgba(255,255,255,0.7); margin-top: 2px; }
+.btn-novo-projeto {
+  background: var(--red-dark); color: #fff; border: none;
+  padding: 9px 18px; border-radius: 6px; font-size: 13px; font-weight: 600;
+  cursor: pointer; display: flex; align-items: center; gap: 6px;
+  font-family: var(--font); transition: background .2s;
+}
+.btn-novo-projeto:hover { background: #a82e18; }
+
+.proj-cards { display: grid; grid-template-columns: repeat(3, 1fr); gap: 16px; margin-bottom: 20px; }
+.proj-card {
+  background: #fff; border-radius: 10px;
+  padding: 18px 20px 16px; border: 1px solid var(--gray-200);
+  cursor: pointer; transition: all .2s;
+}
+.proj-card:hover { box-shadow: 0 6px 20px rgba(0,0,0,.1); transform: translateY(-2px); }
+.proj-card-top { display: flex; justify-content: space-between; align-items: flex-start; margin-bottom: 10px; }
+.proj-card-title { font-size: 14px; font-weight: 700; color: var(--gray-900); }
+.proj-card-desc { font-size: 12px; color: var(--gray-600); margin-bottom: 16px; line-height: 1.5; }
+.proj-card-icons { display: flex; gap: 8px; color: var(--gray-400); font-size: 13px; }
+.proj-card-icons i { cursor: pointer; }
+.proj-card-icons i:hover { color: var(--gray-800); }
+.proj-progress-label { display: flex; justify-content: space-between; align-items: center; margin-bottom: 6px; }
+.proj-progress-label span { font-size: 11px; color: var(--gray-600); font-weight: 500; }
+.proj-progress-label strong { font-size: 11px; color: var(--gray-800); }
+.progress-bar { height: 4px; background: var(--gray-200); border-radius: 99px; overflow: hidden; margin-bottom: 14px; }
+.progress-fill { height: 100%; background: var(--red); border-radius: 99px; }
+.btn-acessar {
+  width: 100%; padding: 7px; border: 1px solid var(--gray-200); background: #fff;
+  border-radius: 6px; font-size: 12px; font-weight: 600; color: var(--gray-600);
+  cursor: pointer; font-family: var(--font); transition: all .2s;
+}
+.btn-acessar:hover { background: var(--gray-100); color: var(--gray-900); }
+
+.proj-bottom { display: grid; grid-template-columns: 1fr 1fr; gap: 16px; }
+.proj-widget {
+  background: #fff; border-radius: 10px; padding: 18px 20px;
+  border: 1px solid var(--gray-200);
+}
+.widget-title { font-size: 13px; font-weight: 700; color: var(--gray-900); margin-bottom: 14px; }
+
+.chart-area { height: 80px; position: relative; }
+.chart-svg { width: 100%; height: 100%; }
+
+.cal-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 10px; }
+.cal-header button { background: none; border: none; color: var(--gray-400); cursor: pointer; font-size: 13px; }
+.cal-header span { font-size: 12px; font-weight: 600; color: var(--gray-900); }
+.cal-grid { display: grid; grid-template-columns: repeat(7, 1fr); gap: 2px; text-align: center; }
+.cal-day-hdr { font-size: 10px; color: var(--gray-400); font-weight: 600; padding: 3px 0; }
+.cal-day { font-size: 11px; color: var(--gray-800); padding: 4px 2px; border-radius: 4px; cursor: pointer; }
+.cal-day:hover { background: var(--gray-100); }
+.cal-day.today { background: var(--red); color: #fff; border-radius: 50%; width: 22px; height: 22px; display: flex; align-items: center; justify-content: center; margin: auto; }
+
+.proj-footer {
+  background: #fff; padding: 12px 24px;
+  display: flex; justify-content: space-between; align-items: center;
+  font-size: 11px; color: var(--gray-400);
+  border-top: 1px solid var(--gray-200);
+}
+.proj-footer-links { display: flex; gap: 16px; }
+.proj-footer-links a { color: var(--gray-400); text-decoration: none; cursor: pointer; }
+.proj-footer-links a:hover { color: var(--gray-800); }
+
+#telaTarefas { background: var(--red); flex-direction: column; }
+.kanban-header {
+  background: #fff; display: flex; align-items: center;
+  justify-content: space-between; padding: 0 20px; height: 52px;
+  border-bottom: 1px solid var(--gray-200); gap: 16px;
+}
+.kanban-logo { display: flex; align-items: center; gap: 8px; }
+.kanban-logo-icon { 
+  display: flex;
+  align-items: center;
+}
+.kanban-logo-text { font-size: 14px; font-weight: 700; letter-spacing: 1px; color: var(--gray-900); }
+.kanban-breadcrumb { display: flex; align-items: center; gap: 6px; font-size: 13px; color: var(--gray-400); }
+.kanban-breadcrumb span { color: var(--gray-800); font-weight: 500; }
+.kanban-header-right { display: flex; align-items: center; gap: 10px; margin-left: auto; }
+.kanban-search {
+  display: flex; align-items: center; gap: 6px;
+  background: var(--gray-100); border-radius: 6px;
+  padding: 5px 12px; border: 1px solid var(--gray-200);
+}
+.kanban-search input {
+  border: none; background: transparent; font-size: 12px;
+  color: var(--gray-800); font-family: var(--font); outline: none; width: 140px;
+}
+.kanban-search i { color: var(--gray-400); font-size: 12px; }
+
+.kanban-tabs {
+  background: #fff; display: flex; align-items: center;
+  padding: 0 20px; border-bottom: 1px solid var(--gray-200); gap: 2px;
+}
+.kanban-tab {
+  display: flex; align-items: center; gap: 6px;
+  padding: 10px 14px; font-size: 12px; color: var(--gray-400);
+  cursor: pointer; border-bottom: 2px solid transparent; transition: all .2s;
+  font-weight: 500;
+}
+.kanban-tab:hover { color: var(--gray-800); }
+.kanban-tab.active { color: var(--gray-900); border-bottom-color: var(--red); }
+.kanban-tab i { font-size: 13px; }
+
+.kanban-body { flex: 1; padding: 20px; display: flex; gap: 14px; overflow-x: auto; }
+
+.kanban-col {
+  background: #fff; border-radius: 10px; flex: 0 0 260px;
+  display: flex; flex-direction: column;
+  border: 1px solid var(--gray-200); max-height: calc(100vh - 140px);
+}
+.kanban-col-new {
+  background: rgba(255,255,255,0.15); border-radius: 10px; flex: 0 0 220px;
+  border: 2px dashed rgba(255,255,255,0.4);
+  display: flex; align-items: center; justify-content: center;
+  cursor: pointer; transition: background .2s; min-height: 200px;
+}
+.kanban-col-new:hover { background: rgba(255,255,255,0.25); }
+.kanban-col-new-inner { display: flex; flex-direction: column; align-items: center; gap: 8px; color: rgba(255,255,255,0.7); }
+.kanban-col-new-inner i { font-size: 20px; }
+.kanban-col-new-inner span { font-size: 13px; font-weight: 500; }
+
+.col-header {
+  display: flex; align-items: center; justify-content: space-between;
+  padding: 14px 16px 10px; border-bottom: 1px solid var(--gray-100);
+}
+.col-header-left { display: flex; align-items: center; gap: 8px; }
+.col-title { font-size: 13px; font-weight: 700; color: var(--gray-900); }
+.col-count {
+  background: var(--gray-100); border-radius: 99px;
+  padding: 2px 8px; font-size: 11px; font-weight: 600; color: var(--gray-600);
+}
+.col-menu { color: var(--gray-400); cursor: pointer; font-size: 16px; letter-spacing: 1px; }
+.col-menu:hover { color: var(--gray-800); }
+
+.col-cards { padding: 10px; flex: 1; overflow-y: auto; display: flex; flex-direction: column; gap: 8px; }
+.col-cards::-webkit-scrollbar { width: 4px; }
+.col-cards::-webkit-scrollbar-track { background: transparent; }
+.col-cards::-webkit-scrollbar-thumb { background: var(--gray-200); border-radius: 4px; }
+
+.task-card {
+  background: #fff; border: 1px solid var(--gray-200); border-radius: 8px;
+  padding: 12px 14px; cursor: pointer; transition: all .2s;
+}
+.task-card:hover { border-color: var(--gray-400); box-shadow: 0 2px 8px rgba(0,0,0,.06); }
+.task-card-label {
+  font-size: 10px; font-weight: 600; text-transform: uppercase;
+  letter-spacing: .5px; margin-bottom: 6px;
+}
+.label-design { color: #7c3aed; }
+.label-dev { color: #0369a1; }
+.label-mkt { color: #b45309; }
+.task-card-title { font-size: 13px; font-weight: 600; color: var(--gray-900); margin-bottom: 10px; line-height: 1.4; }
+.task-card-bottom { display: flex; align-items: center; justify-content: space-between; }
+.task-avatar {
+  width: 24px; height: 24px; border-radius: 50%;
+  display: flex; align-items: center; justify-content: center;
+  font-size: 10px; font-weight: 700; color: #fff;
+}
+.task-card-meta { display: flex; align-items: center; gap: 6px; }
+.task-date { font-size: 10px; color: var(--gray-400); display: flex; align-items: center; gap: 3px; }
+.task-prio {
+  font-size: 10px; font-weight: 600; padding: 2px 8px; border-radius: 99px;
+  text-transform: uppercase;
+}
+.prio-alta { background: #ffe4e6; color: #be123c; }
+.prio-media { background: #fef3c7; color: #92400e; }
+.prio-baixa { background: #dcfce7; color: #166534; }
+
+.col-add-btn {
+  display: flex; align-items: center; gap: 6px;
+  padding: 10px 16px; font-size: 12px; color: var(--gray-400);
+  cursor: pointer; border-top: 1px solid var(--gray-100);
+  transition: color .2s;
+}
+.col-add-btn:hover { color: var(--gray-800); }
+.col-add-btn i { font-size: 12px; }
+
+.modal-bg {
+  position: fixed; inset: 0;
+  background: rgba(0,0,0,0.5);
+  display: none; align-items: center; justify-content: center;
+  z-index: 1000;
+}
+.modal-bg.aberto { display: flex; }
+.modal-card {
+  background: #fff; border-radius: 12px; width: 560px; max-width: 95vw;
+  max-height: 90vh; overflow-y: auto; box-shadow: 0 20px 40px rgba(0,0,0,.2);
+}
+.modal-top {
+  display: flex; align-items: center; justify-content: space-between;
+  padding: 16px 20px 12px;
+  border-bottom: 1px solid var(--gray-200);
+}
+.modal-col-badge {
+  display: flex; align-items: center; gap: 8px;
+}
+.modal-col-name { font-size: 12px; font-weight: 600; color: var(--gray-600); }
+.modal-col-status {
+  font-size: 11px; color: var(--gray-400); padding: 2px 8px;
+  border: 1px solid var(--gray-200); border-radius: 99px;
+}
+.modal-close {
+  width: 28px; height: 28px; border-radius: 50%;
+  background: var(--gray-100); border: none; cursor: pointer;
+  font-size: 16px; color: var(--gray-600); display: flex; align-items: center; justify-content: center;
+}
+.modal-close:hover { background: var(--gray-200); }
+.modal-body { padding: 20px; }
+.modal-title { font-size: 20px; font-weight: 700; color: var(--gray-900); margin-bottom: 14px; line-height: 1.3; }
+.modal-section-label { font-size: 11px; font-weight: 600; text-transform: uppercase; letter-spacing: .5px; color: var(--gray-400); margin-bottom: 6px; }
+.modal-desc { font-size: 13px; color: var(--gray-600); line-height: 1.6; margin-bottom: 18px; background: var(--gray-50); border-radius: 8px; padding: 12px; }
+.modal-row { display: grid; grid-template-columns: 1fr 1fr; gap: 16px; margin-bottom: 18px; }
+.modal-field label { font-size: 11px; font-weight: 600; text-transform: uppercase; letter-spacing: .5px; color: var(--gray-400); display: block; margin-bottom: 8px; }
+.prio-options { display: flex; gap: 6px; }
+.prio-opt {
+  padding: 4px 10px; border-radius: 99px; font-size: 11px; font-weight: 600;
+  cursor: pointer; border: 1px solid var(--gray-200); color: var(--gray-600);
+  transition: all .2s;
+}
+.prio-opt.sel-alta { background: #ffe4e6; color: #be123c; border-color: #fda4af; }
+.prio-opt.sel-media { background: #fef3c7; color: #92400e; border-color: #fde68a; }
+.prio-opt.sel-baixa { background: #dcfce7; color: #166534; border-color: #86efac; }
+.prio-opt:hover { background: var(--gray-100); }
+.modal-date-info { font-size: 13px; color: var(--gray-600); display: flex; align-items: center; gap: 6px; }
+.modal-date-info i { color: var(--gray-400); }
+
+.subtasks-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 10px; }
+.subtasks-progress-text { font-size: 11px; color: var(--gray-400); }
+.subtask-item {
+  display: flex; align-items: center; gap: 10px;
+  padding: 8px 0; border-bottom: 1px solid var(--gray-100); font-size: 13px; color: var(--gray-800);
+}
+.subtask-item:last-child { border-bottom: none; }
+.subtask-item input[type=checkbox] { accent-color: var(--red); width: 15px; height: 15px; }
+.subtask-item.done span { text-decoration: line-through; color: var(--gray-400); }
+.add-subtask {
+  display: flex; align-items: center; gap: 8px;
+  padding: 8px 0; font-size: 12px; color: var(--red);
+  cursor: pointer; font-weight: 600;
+}
+.add-subtask:hover { color: var(--red-dark); }
+
+.modal-desc-edit {
+  width: 100%; padding: 10px; border: 1px solid var(--gray-200);
+  border-radius: 8px; font-family: var(--font); font-size: 13px;
+  color: var(--gray-800); resize: vertical; min-height: 80px; outline: none;
+}
+.modal-desc-edit:focus { border-color: var(--red); }
+
+.modal-footer {
+  display: flex; align-items: center; justify-content: space-between;
+  padding: 14px 20px; border-top: 1px solid var(--gray-200);
+  flex-wrap: wrap; gap: 10px;
+}
+.modal-footer-left { display: flex; gap: 8px; }
+.btn-edit-pdf {
+  padding: 7px 14px; border: 1px solid var(--gray-200); border-radius: 6px;
+  font-size: 12px; font-weight: 600; color: var(--gray-600);
+  cursor: pointer; background: #fff; font-family: var(--font);
+  transition: all .2s; display: flex; align-items: center; gap: 5px;
+}
+.btn-edit-pdf:hover { background: var(--gray-100); }
+.btn-mover {
+  padding: 7px 14px; border: 1px solid var(--gray-200); border-radius: 6px;
+  font-size: 12px; font-weight: 600; color: var(--gray-600);
+  cursor: pointer; background: #fff; font-family: var(--font);
+  transition: all .2s; display: flex; align-items: center; gap: 5px;
+}
+.btn-mover:hover { background: var(--gray-100); }
+select.btn-mover { appearance: none; }
+.modal-footer-right { display: flex; gap: 8px; }
+.btn-salvar {
+  padding: 7px 18px; background: var(--red); color: #fff; border: none;
+  border-radius: 6px; font-size: 12px; font-weight: 700;
+  cursor: pointer; font-family: var(--font); transition: background .2s;
+}
+.btn-salvar:hover { background: var(--red-dark); }
+.btn-deletar {
+  padding: 7px 18px; background: #fff; color: #dc2626; border: 1px solid #fca5a5;
+  border-radius: 6px; font-size: 12px; font-weight: 700;
+  cursor: pointer; font-family: var(--font); transition: all .2s;
+}
+.btn-deletar:hover { background: #fef2f2; }
+
+.btn-sair-topo {
+  background: none; border: none; color: var(--gray-400); cursor: pointer;
+  font-size: 13px; font-family: var(--font); display: flex; align-items: center; gap: 4px;
+  padding: 5px 10px; border-radius: 6px; transition: all .2s;
+}
+.btn-sair-topo:hover { background: var(--gray-100); color: #dc2626; }
+
+@media(max-width:900px){
+  .proj-cards { grid-template-columns: 1fr; }
+  .proj-bottom { grid-template-columns: 1fr; }
+  .card-login { width: 92vw; padding: 28px 22px 22px; }
+}
+</style>
+</head>
+<body>
+
+<div id="telaLogin" class="tela ativa">
+  <div class="card-login">
+    <div class="login-logo">
+      <img src="https://i.postimg.cc/4yDV3nny/logo-Mascote1.png" alt="Logo" class="logo-img-grande">
+    </div>
+    <div class="login-brand">DARUTASK</div>
+    <div class="login-tag">Organize suas tarefas de forma simples</div>
+
+    <div class="login-field">
+      <label>E-mail</label>
+      <div class="input-icon">
+        <i class="fas fa-envelope"></i>
+        <input type="email" id="loginEmail" placeholder="seu@email.com">
+      </div>
+    </div>
+
+    <div class="login-field">
+      <div class="field-row-lbl">
+        <label>Senha</label>
+        <a href="#" class="forgot">Esqueci minha senha</a>
+      </div>
+      <div class="input-icon">
+        <i class="fas fa-lock"></i>
+        <input type="password" id="loginSenha" placeholder="••••••••">
+      </div>
+    </div>
+
+    <label class="check-row">
+      <input type="checkbox" checked>
+      <span>Lembrar de mim</span>
+    </label>
+
+    <button class="btn-entrar-login" id="btnEntrar">ENTRAR</button>
+
+    <p class="login-register">Não tem uma conta? <a>Cadastre-se</a></p>
+
+    <div class="login-links">
+      <span><i class="fas fa-shield-alt"></i> Acesso Seguro</span>
+      <span><i class="fas fa-globe"></i> Português (BR)</span>
+    </div>
+  </div>
+  <div class="login-footer">© 2024 Sistema de Gerenciamento de Projetos</div>
+</div>
+
+<div id="telaProjetos" class="tela">
+  <div class="proj-header">
+    <div class="proj-logo">
+      <span class="proj-logo-icon">
+        <img src="https://i.postimg.cc/4yDV3nny/logo-Mascote1.png" alt="Logo" class="logo-img">
+      </span>
+      <span class="proj-logo-text">DARUTASK</span>
+    </div>
+    <div class="proj-search">
+      <i class="fas fa-search"></i>
+      <input type="text" placeholder="Buscar projetos...">
+    </div>
+    <div class="proj-header-right">
+      <button class="btn-icon-header btn-sair-topo" id="btnSairProjetos" title="Sair">
+        <i class="fas fa-sign-out-alt"></i>
+      </button>
+    </div>
+  </div>
+
+  <div class="proj-body">
+    <div class="proj-section-top">
+      <div class="proj-section-title">
+        <h2>Meus Projetos</h2>
+        <p>Gerencie e acompanhe o progresso de suas equipes.</p>
+      </div>
+      <button class="btn-novo-projeto"><i class="fas fa-plus"></i> Criar Novo Projeto</button>
+    </div>
+
+    <div class="proj-cards">
+      <div class="proj-card" onclick="abrirKanban('Projeto Alpha')">
+        <div class="proj-card-top">
+          <div class="proj-card-title">Projeto Alpha</div>
+          <div class="proj-card-icons">
+            <i class="fas fa-cog"></i>
+            <i class="fas fa-arrows-up-down-left-right"></i>
+          </div>
+        </div>
+        <div class="proj-card-desc">Desenvolvimento da nova interface do portal corporativo e integração de APIs.</div>
+        <div class="proj-progress-label"><span>Progresso</span><strong>75%</strong></div>
+        <div class="progress-bar"><div class="progress-fill" style="width:75%"></div></div>
+        <button class="btn-acessar">Acessar</button>
+      </div>
+      <div class="proj-card" onclick="abrirKanban('Projeto Beta')">
+        <div class="proj-card-top">
+          <div class="proj-card-title">Projeto Beta</div>
+          <div class="proj-card-icons">
+            <i class="fas fa-cog"></i>
+            <i class="fas fa-arrows-up-down-left-right"></i>
+          </div>
+        </div>
+        <div class="proj-card-desc">Migração de banco de dados legado para infraestrutura em nuvem escalável.</div>
+        <div class="proj-progress-label"><span>Progresso</span><strong>30%</strong></div>
+        <div class="progress-bar"><div class="progress-fill" style="width:30%"></div></div>
+        <button class="btn-acessar">Acessar</button>
+      </div>
+      <div class="proj-card" onclick="abrirKanban('Marketing Q4')">
+        <div class="proj-card-top">
+          <div class="proj-card-title">Marketing Q4</div>
+          <div class="proj-card-icons">
+            <i class="fas fa-cog"></i>
+            <i class="fas fa-arrows-up-down-left-right"></i>
+          </div>
+        </div>
+        <div class="proj-card-desc">Campanha de lançamento de final de ano e estratégias de retenção de clientes.</div>
+        <div class="proj-progress-label"><span>Progresso</span><strong>90%</strong></div>
+        <div class="progress-bar"><div class="progress-fill" style="width:90%"></div></div>
+        <button class="btn-acessar">Acessar</button>
+      </div>
+    </div>
+
+    <div class="proj-bottom">
+      <div class="proj-widget">
+        <div class="widget-title">Atividade Semanal</div>
+        <div class="chart-area">
+          <svg class="chart-svg" viewBox="0 0 300 80" preserveAspectRatio="none">
+            <defs>
+              <linearGradient id="grad" x1="0" y1="0" x2="0" y2="1">
+                <stop offset="0%" stop-color="#E8442A" stop-opacity="0.2"/>
+                <stop offset="100%" stop-color="#E8442A" stop-opacity="0"/>
+              </linearGradient>
+            </defs>
+            <path d="M0,60 L40,50 L80,30 L120,45 L160,20 L200,35 L240,15 L300,40" fill="none" stroke="#E8442A" stroke-width="2"/>
+            <path d="M0,60 L40,50 L80,30 L120,45 L160,20 L200,35 L240,15 L300,40 L300,80 L0,80 Z" fill="url(#grad)"/>
+          </svg>
+        </div>
+        <div style="display:flex;justify-content:space-between;margin-top:6px;">
+          <span style="font-size:10px;color:var(--gray-400)">Seg</span><span style="font-size:10px;color:var(--gray-400)">Ter</span><span style="font-size:10px;color:var(--gray-400)">Qua</span><span style="font-size:10px;color:var(--gray-400)">Qui</span><span style="font-size:10px;color:var(--gray-400)">Sex</span><span style="font-size:10px;color:var(--gray-400)">Sáb</span><span style="font-size:10px;color:var(--gray-400)">Dom</span>
+        </div>
+      </div>
+      <div class="proj-widget">
+        <div class="widget-title">Distribuição de Tarefas por Data</div>
+        <div class="cal-header">
+          <button><i class="fas fa-chevron-left"></i></button>
+          <span>April 2026</span>
+          <button><i class="fas fa-chevron-right"></i></button>
+        </div>
+        <div class="cal-grid">
+          <div class="cal-day-hdr">Mo</div><div class="cal-day-hdr">Tu</div><div class="cal-day-hdr">We</div><div class="cal-day-hdr">Th</div><div class="cal-day-hdr">Fr</div><div class="cal-day-hdr">Sa</div><div class="cal-day-hdr">Su</div>
+          <div class="cal-day"></div><div class="cal-day">1</div><div class="cal-day">2</div><div class="cal-day">3</div><div class="cal-day">4</div><div class="cal-day">5</div><div class="cal-day">6</div>
+          <div class="cal-day">7</div><div class="cal-day">8</div><div class="cal-day">9</div><div class="cal-day">10</div><div class="cal-day today">11</div><div class="cal-day">12</div><div class="cal-day">13</div>
+          <div class="cal-day">14</div><div class="cal-day">15</div><div class="cal-day">16</div><div class="cal-day">17</div><div class="cal-day">18</div><div class="cal-day">19</div><div class="cal-day">20</div>
+          <div class="cal-day">21</div><div class="cal-day">22</div><div class="cal-day">23</div><div class="cal-day">24</div><div class="cal-day">25</div><div class="cal-day">26</div><div class="cal-day">27</div>
+          <div class="cal-day">28</div><div class="cal-day">29</div><div class="cal-day">30</div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="proj-footer">
+    <span>© 2024 Sistema de Gerenciamento de Projetos</span>
+    <div class="proj-footer-links">
+      <a>Privacidade</a><a>Termos</a><a>Suporte</a>
+    </div>
+  </div>
+</div>
+
+<div id="telaTarefas" class="tela">
+  <div class="kanban-header">
+    <div class="kanban-logo">
+      <span class="kanban-logo-icon">
+        <img src="https://i.postimg.cc/4yDV3nny/logo-Mascote1.png" alt="Logo" class="logo-img">
+      </span>
+      <span class="kanban-logo-text">DARUTASK</span>
+    </div>
+    <div class="kanban-breadcrumb">
+      <i class="fas fa-folder" style="font-size:12px"></i>
+      <span id="nomeProjetoKanban">Projeto Alpha</span>
+    </div>
+    <div class="kanban-header-right">
+      <div class="kanban-search">
+        <i class="fas fa-search"></i>
+        <input type="text" placeholder="Buscando...">
+      </div>
+      <button class="btn-novo-projeto" style="font-size:12px;padding:7px 14px;" onclick="abrirModalNova()">
+        <i class="fas fa-plus"></i> Nova Tarefa
+      </button>
+      <button class="btn-icon-header" title="Configurações"><i class="fas fa-cog"></i></button>
+      <button class="btn-sair-topo" id="btnVoltarKanban"><i class="fas fa-arrow-left"></i> Voltar</button>
+    </div>
+  </div>
+
+  <div class="kanban-tabs">
+    <div class="kanban-tab active"><i class="fas fa-th"></i> Quadro</div>
+    <div class="kanban-tab"><i class="fas fa-list"></i> Lista</div>
+    <div class="kanban-tab"><i class="fas fa-calendar"></i> Cronograma</div>
+  </div>
+
+  <div class="kanban-body">
+
+    <div class="kanban-col">
+      <div class="col-header">
+        <div class="col-header-left">
+          <span class="col-title">A Fazer</span>
+          <span class="col-count" id="cnt-afazer">3</span>
+        </div>
+        <span class="col-menu">···</span>
+      </div>
+      <div class="col-cards" id="col-afazer">
+        <div class="task-card" onclick="abrirModal(this)" data-titulo="Redesign interface de login" data-label="Design" data-prio="Alta" data-data="12 de Mar, 2026" data-avatar="BG" data-avcolor="#7c3aed" data-col="A Fazer" data-desc="Desenvolver a nova interface de login seguindo o design system atualizado. Garantir acessibilidade e responsividade em todos os dispositivos." data-subs='["Criar wireframe de baixa fidelidade","Prototipar no Figma","Revisar com o time de UX","Aprovar com stakeholders"]' data-sdone='[true,true,false,false]'>
+          <div class="task-card-label label-design">Design</div>
+          <div class="task-card-title">Redesign interface de login</div>
+          <div class="task-card-bottom">
+            <div class="task-avatar" style="background:#7c3aed">BG</div>
+            <div class="task-card-meta">
+              <span class="task-date"><i class="fas fa-calendar-alt"></i> 12 Mar</span>
+              <span class="task-prio prio-alta">Alta</span>
+            </div>
+          </div>
+        </div>
+        <div class="task-card" onclick="abrirModal(this)" data-titulo="Refatoração manual do usuário" data-label="Dev" data-prio="Média" data-data="20 de Mar, 2026" data-avatar="KL" data-avcolor="#0369a1" data-col="A Fazer" data-desc="Revisar e refatorar o módulo de gerenciamento de usuários para melhorar performance e legibilidade do código." data-subs='["Mapear módulos existentes","Identificar gargalos","Reescrever funções críticas"]' data-sdone='[true,false,false]'>
+          <div class="task-card-label label-dev">Dev</div>
+          <div class="task-card-title">Refatoração manual do usuário</div>
+          <div class="task-card-bottom">
+            <div class="task-avatar" style="background:#0369a1">KL</div>
+            <div class="task-card-meta">
+              <span class="task-date"><i class="fas fa-calendar-alt"></i> 20 Mar</span>
+              <span class="task-prio prio-media">Média</span>
+            </div>
+          </div>
+        </div>
+        <div class="task-card" onclick="abrirModal(this)" data-titulo="Corrigir erro na exportação PDF" data-label="Dev" data-prio="Baixa" data-data="05 de Abr, 2026" data-avatar="RJ" data-avcolor="#059669" data-col="A Fazer" data-desc="Investigar e corrigir o bug reportado na exportação de relatórios em PDF que causa formatação incorreta." data-subs='["Reproduzir o bug","Identificar causa raiz","Implementar correção","Testar em produção"]' data-sdone='[true,false,false,false]'>
+          <div class="task-card-label label-dev">Dev</div>
+          <div class="task-card-title">Corrigir erro na exportação PDF</div>
+          <div class="task-card-bottom">
+            <div class="task-avatar" style="background:#059669">RJ</div>
+            <div class="task-card-meta">
+              <span class="task-date"><i class="fas fa-calendar-alt"></i> 05 Abr</span>
+              <span class="task-prio prio-baixa">Baixa</span>
+            </div>
+          </div>
+        </div>
+      </div>
+      <div class="col-add-btn" onclick="abrirModalNova()"><i class="fas fa-plus"></i> Adicionar Tarefa</div>
+    </div>
+
+    <div class="kanban-col">
+      <div class="col-header">
+        <div class="col-header-left">
+          <span class="col-title">Em Andamento</span>
+          <span class="col-count" id="cnt-andamento">2</span>
+        </div>
+        <span class="col-menu">···</span>
+      </div>
+      <div class="col-cards" id="col-andamento">
+        <div class="task-card" onclick="abrirModal(this)" data-titulo="Implementar o Fluxo de Autenticação de Usuário" data-label="Dev" data-prio="Alta" data-data="14 de Mar, 2026" data-avatar="AM" data-avcolor="#dc2626" data-col="Em Andamento" data-desc="Desenvolver a lógica de backend e os componentes de frontend para o sistema de login e registro de usuários, com foco na manipulação JWT, integração com NextAuth.js para a criação da interface UI e a tela de modal de login. Garantir que o código seja limpo e siga convenções adequadas." data-subs='["Configurar banco de dados com supabase","Implementar endpoints POST /api/register","Implementar endpoints POST /api/login","Criar componentes de formulário do login funcional"]' data-sdone='[true,true,true,true]'>
+          <div class="task-card-label label-dev">Dev</div>
+          <div class="task-card-title">Implementar o Fluxo de Autenticação de Usuário</div>
+          <div class="task-card-bottom">
+            <div class="task-avatar" style="background:#dc2626">AM</div>
+            <div class="task-card-meta">
+              <span class="task-date"><i class="fas fa-calendar-alt"></i> 14 Mar</span>
+              <span class="task-prio prio-alta">Alta</span>
+            </div>
+          </div>
+        </div>
+        <div class="task-card" onclick="abrirModal(this)" data-titulo="Campanha de lançamento Q3" data-label="Mkt" data-prio="Média" data-data="30 de Mar, 2026" data-avatar="FS" data-avcolor="#b45309" data-col="Em Andamento" data-desc="Planejar e executar a campanha de lançamento do produto para o terceiro trimestre, incluindo redes sociais, email marketing e parceiros." data-subs='["Briefing criativo","Aprovar artes","Agendar publicações"]' data-sdone='[true,true,false]'>
+          <div class="task-card-label label-mkt">Mkt</div>
+          <div class="task-card-title">Campanha de lançamento Q3</div>
+          <div class="task-card-bottom">
+            <div class="task-avatar" style="background:#b45309">FS</div>
+            <div class="task-card-meta">
+              <span class="task-date"><i class="fas fa-calendar-alt"></i> 30 Mar</span>
+              <span class="task-prio prio-media">Média</span>
+            </div>
+          </div>
+        </div>
+      </div>
+      <div class="col-add-btn" onclick="abrirModalNova()"><i class="fas fa-plus"></i> Adicionar Tarefa</div>
+    </div>
+
+    <div class="kanban-col">
+      <div class="col-header">
+        <div class="col-header-left">
+          <span class="col-title">Concluída</span>
+          <span class="col-count" id="cnt-concluida">1</span>
+        </div>
+        <span class="col-menu">···</span>
+      </div>
+      <div class="col-cards" id="col-concluida">
+        <div class="task-card" onclick="abrirModal(this)" data-titulo="Migração do servidor para nuvem" data-label="Dev" data-prio="Alta" data-data="01 de Mar, 2026" data-avatar="PL" data-avcolor="#6b7280" data-col="Concluída" data-desc="Migração completa da infraestrutura on-premise para AWS. Configuração de auto-scaling, load balancers e CI/CD pipeline." data-subs='["Mapear dependências","Configurar ambiente AWS","Migrar banco de dados","Validar em produção"]' data-sdone='[true,true,true,true]' style="opacity:.75">
+          <div class="task-card-label label-dev">Dev</div>
+          <div class="task-card-title" style="text-decoration:line-through;color:var(--gray-400)">Migração do servidor para nuvem</div>
+          <div class="task-card-bottom">
+            <div class="task-avatar" style="background:#6b7280">PL</div>
+            <div class="task-card-meta">
+              <span class="task-date"><i class="fas fa-calendar-alt"></i> 01 Mar</span>
+              <span class="task-prio prio-baixa">Concluída</span>
+            </div>
+          </div>
+        </div>
+        <div class="col-add-btn" style="justify-content:center;border-top:2px dashed var(--gray-200);color:var(--gray-300);margin-top:8px;">
+          <i class="fas fa-plus"></i> Adicionar Tarefa
+        </div>
+      </div>
+    </div>
+
+    <div class="kanban-col-new">
+      <div class="kanban-col-new-inner">
+        <i class="fas fa-plus"></i>
+        <span>Adicionar Coluna</span>
+      </div>
+    </div>
+  </div>
+</div>
+
+<div class="modal-bg" id="modalTarefa">
+  <div class="modal-card">
+    <div class="modal-top">
+      <div class="modal-col-badge">
+        <span class="modal-col-name" id="mColNome">Em Andamento</span>
+        <span class="modal-col-status" id="mPrioTop">Alta</span>
+      </div>
+      <button class="modal-close" onclick="fecharModal()">×</button>
+    </div>
+    <div class="modal-body">
+      <div class="modal-title" id="mTitulo">Título da Tarefa</div>
+
+      <div class="modal-section-label">Descrição</div>
+      <div class="modal-desc" id="mDesc">Descrição aqui.</div>
+
+      <div class="modal-row">
+        <div class="modal-field">
+          <label>Prioridade Estimada</label>
+          <div class="prio-options" id="mPrioOpts">
+            <span class="prio-opt" data-prio="Alta">Alta</span>
+            <span class="prio-opt" data-prio="Média">Média</span>
+            <span class="prio-opt" data-prio="Baixa">Baixa</span>
+          </div>
+        </div>
+        <div class="modal-field">
+          <label>Data Limite</label>
+          <div class="modal-date-info"><i class="fas fa-calendar"></i> <span id="mData">-</span></div>
+        </div>
+      </div>
+
+      <div class="subtasks-header">
+        <div class="modal-section-label" style="margin-bottom:0">Subtarefas</div>
+        <span class="subtasks-progress-text" id="mSubProgress">0% Completo</span>
+      </div>
+      <div id="mSubtasks" style="margin-bottom:12px;"></div>
+      <div class="add-subtask"><i class="fas fa-plus"></i> Adicionar subtarefa</div>
+    </div>
+    <div class="modal-footer">
+      <div class="modal-footer-left">
+        <button class="btn-edit-pdf"><i class="fas fa-file-pdf"></i> Editar PDF</button>
+        <select class="btn-mover">
+          <option>Mover Coluna ▾</option>
+          <option>A Fazer</option>
+          <option>Em Andamento</option>
+          <option>Concluída</option>
+        </select>
+      </div>
+      <div class="modal-footer-right">
+        <button class="btn-salvar" onclick="fecharModal()"><i class="fas fa-save"></i> Salvar</button>
+        <button class="btn-deletar">Deletar</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<script>
+document.getElementById('btnEntrar').addEventListener('click', () => {
+  const email = document.getElementById('loginEmail').value.trim();
+  if (!email) { document.getElementById('loginEmail').style.borderColor='#dc2626'; return; }
+  mostrar('telaProjetos');
+});
+document.getElementById('loginSenha').addEventListener('keypress', e => { if(e.key==='Enter') document.getElementById('btnEntrar').click(); });
+document.getElementById('loginEmail').addEventListener('keypress', e => { if(e.key==='Enter') document.getElementById('btnEntrar').click(); });
+
+document.getElementById('btnSairProjetos').addEventListener('click', () => mostrar('telaLogin'));
+
+function abrirKanban(nome) {
+  document.getElementById('nomeProjetoKanban').textContent = nome;
+  mostrar('telaTarefas');
+}
+
+document.getElementById('btnVoltarKanban').addEventListener('click', () => mostrar('telaProjetos'));
+
+function abrirModal(el) {
+  const t = el.dataset;
+  document.getElementById('mTitulo').textContent = t.titulo;
+  document.getElementById('mColNome').textContent = t.col;
+  document.getElementById('mPrioTop').textContent = t.prio;
+  document.getElementById('mDesc').textContent = t.desc;
+  document.getElementById('mData').textContent = t.data;
+
+  const prioClass = { 'Alta':'sel-alta', 'Média':'sel-media', 'Baixa':'sel-baixa' };
+  document.querySelectorAll('#mPrioOpts .prio-opt').forEach(o => {
+    o.className = 'prio-opt';
+    if (o.dataset.prio === t.prio) o.classList.add(prioClass[t.prio]);
+  });
+
+  const subs = JSON.parse(t.subs || '[]');
+  const sdone = JSON.parse(t.sdone || '[]');
+  const done = sdone.filter(Boolean).length;
+  document.getElementById('mSubProgress').textContent = subs.length ? Math.round(done/subs.length*100)+'% Completo' : '0% Completo';
+  const cont = document.getElementById('mSubtasks');
+  cont.innerHTML = subs.map((s,i) => `
+    <div class="subtask-item ${sdone[i]?'done':''}">
+      <input type="checkbox" ${sdone[i]?'checked':''}>
+      <span>${s}</span>
+    </div>
+  `).join('');
+
+  document.getElementById('modalTarefa').classList.add('aberto');
+  document.body.style.overflow = 'hidden';
+}
+
+function fecharModal() {
+  document.getElementById('modalTarefa').classList.remove('aberto');
+  document.body.style.overflow = '';
+}
+
+document.getElementById('modalTarefa').addEventListener('click', e => {
+  if (e.target === document.getElementById('modalTarefa')) fecharModal();
+});
+
+function abrirModalNova() {
+  alert('Formulário de nova tarefa — implemente conforme necessário.');
+}
+
+function mostrar(id) {
+  document.querySelectorAll('.tela').forEach(t => t.classList.remove('ativa'));
+  document.getElementById(id).classList.add('ativa');
+}
+</script>
+</body>
 </html>
