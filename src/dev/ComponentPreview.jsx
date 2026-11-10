@@ -1,10 +1,10 @@
-import Header from "../components/header/header"
+import AuthCard from "../components/authCard/AuthCard"
 import "./componentPreview.css"
 
 export default function ComponentPreview(){
     return(
         <div className="bg-color">
-            <Header/>
+            <AuthCard/>
         </div>
     )
 }
