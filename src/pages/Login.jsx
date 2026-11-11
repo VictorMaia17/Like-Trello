@@ -11,7 +11,12 @@ export default function Login(){
             min-h-screen"
         >
             <AuthCard>
-                <FormField/>
+                <FormField label = "email" type= "email" id= "idEmail" placeholder= "exemplo@gmail.com"/>
+            
+                <a href="#" className="text-gray-400">Esqueci minha senha</a>
+
+                <FormField label = "senha" type= "password" id= "idSenha" placeholder= "senha"/>
+
             </AuthCard>
         </div>
     )
