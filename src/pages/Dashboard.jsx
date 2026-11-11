@@ -13,7 +13,6 @@ export default function Dashboard() {
   const [diaSelecionado, setDiaSelecionado] = useState(11);
   const [diaSemanaExpandido, setDiaSemanaExpandido] = useState(null);
   
-  // DADOS CORRIGIDOS: O valor agora bate com a quantidade de tarefas
   const dadosSemana = [
     { dia: 'Seg', valor: 3, tarefas: 3 },
     { dia: 'Ter', valor: 1, tarefas: 1 },
