@@ -29,6 +29,17 @@ export default function AuthCard({children}){
             Organize suas tarefas de forma simples
         </div>
         {children}
+        <div className="flex justify-between items-center text-xs text-[#8B9BB5] mt-1 gap-3">
+            <span className="flex items-center gap-2">
+                <i className="fas fa-shield-alt"></i>
+                    Acesso Seguro
+            </span>
+
+            <span className="flex items-center gap-2">
+                <i className="fas fa-globe"></i>
+                    Português (BR)
+                </span>
+            </div>
     </div>
     )
 }

@@ -1,4 +1,4 @@
-export default function FormField({label, type, id, placeholder}) {
+export default function FormField({label, type, id, placeholder, icon = "fa-envelope"}) {
     return (
         <div className="
             flex
@@ -18,7 +18,7 @@ export default function FormField({label, type, id, placeholder}) {
                 flex
                 h-12
                 items-center
-                gap-1
+                gap-2
                 rounded-[10px]
                 border
                 border-gray-200
@@ -31,14 +31,15 @@ export default function FormField({label, type, id, placeholder}) {
                 group"
             >
 
-                <i className="
+                <i className={`
                     fas
-                    fa-envelope
+                    ${icon}
                     text-base
                     text-slate-300
                     transition-colors
-                    group-focus-within:text-slate-400"
-                    ></i>
+                    group-focus-within:text-slate-400`}
+                    aria-hidden="true"
+                ></i>
                 
                 <input
                     type={type}

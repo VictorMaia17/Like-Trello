@@ -1,6 +1,6 @@
 import { Routes, Route, Navigate } from "react-router"
-import ComponentPreview from "./dev/componentPreview"
-import Login from "./pages/login"
+import Login from "./pages/Login"
+import Register from "./pages/Register"
 import Dashboard from "./pages/Dashboard" 
 import PaginaProjeto from "./pages/PaginaProjeto" // Vamos criar essa página
 import "./app.css"
@@ -10,11 +10,13 @@ function App() {
     <Routes>
       <Route path="/dashboard" element={<Dashboard />} />
       <Route path="/login" element={<Login />} />
-      <Route path="/preview" element={<ComponentPreview />} />
+      <Route path="/cadastro" element={<Register />} />
       
       {/* Rota Dinâmica para o projeto */}
       <Route path="/projeto/:nome" element={<PaginaProjeto />} />
       
+      <Route path="*" element={<Navigate to="/login" replace />} />
+
       <Route path="/" element={<Navigate to="/login" replace />} />
     </Routes>
   )
