@@ -1,4 +1,12 @@
-export default function FormField({label, type, id, placeholder, icon = "fa-envelope"}) {
+export default function FormField({
+    label,
+    type,
+    id,
+    placeholder,
+    value,
+    onChange,
+    icon = "fa-envelope"
+    }) {
     return (
         <div className="
             flex
@@ -45,6 +53,8 @@ export default function FormField({label, type, id, placeholder, icon = "fa-enve
                     type={type}
                     id={id}
                     placeholder={placeholder}
+                    value={value}
+                    onChange={onChange}
                     className="
                         h-full
                         flex-1
