@@ -5,7 +5,9 @@ export default function FormField({
     placeholder,
     value,
     onChange,
-    icon = "fa-envelope"
+    icon = "fa-envelope",
+    error,
+    disabled = false
     }) {
     return (
         <div className="
@@ -22,21 +24,21 @@ export default function FormField({
                 {label}
             </label>
 
-            <div className="
+            <div className={`
                 flex
                 h-12
                 items-center
                 gap-2
                 rounded-[10px]
                 border
-                border-gray-200
                 bg-white
                 px-4
                 transition
-                focus-within:border-blue-300
                 focus-within:ring-4
-                focus-within:ring-blue-300/25
-                group"
+                group
+                ${error
+                    ? "border-red-500 focus-within:ring-red-500/20"
+                    : "border-gray-200 focus-within:border-blue-300 focus-within:ring-blue-300/25"}`}
             >
 
                 <i className={`
@@ -48,13 +50,16 @@ export default function FormField({
                     group-focus-within:text-slate-400`}
                     aria-hidden="true"
                 ></i>
-                
+
                 <input
                     type={type}
                     id={id}
                     placeholder={placeholder}
                     value={value}
                     onChange={onChange}
+                    disabled={disabled}
+                    aria-invalid={error ? "true" : "false"}
+                    aria-describedby={error ? `${id}-erro` : undefined}
                     className="
                         h-full
                         flex-1
@@ -63,9 +68,16 @@ export default function FormField({
                         text-base
                         text-gray-700
                         outline-none
-                        placeholder:text-gray-500"
+                        placeholder:text-gray-500
+                        disabled:opacity-60"
                 />
             </div>
+
+            {error && (
+                <span id={`${id}-erro`} role="alert" className="text-xs text-red-600">
+                    {error}
+                </span>
+            )}
         </div>
     );
 }
