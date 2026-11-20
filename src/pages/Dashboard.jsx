@@ -1,4 +1,5 @@
 import { useState } from 'react';
+import { useNavigate } from 'react-router';
 import CardProjeto from '../components/dashboard/CardProjeto';
 
 const TAREFAS_SIMULADAS = {
@@ -7,7 +8,9 @@ const TAREFAS_SIMULADAS = {
   20: ["Planejamento Sprint 2"]
 };
 
-export default function Dashboard() {
+export default function Dashboard({ projects = [] }) {
+  const navigate = useNavigate();
+
   const [mesAtual, setMesAtual] = useState(11); // 11 = Dezembro
   const [anoAtual, setAnoAtual] = useState(2026);
   const [diaSelecionado, setDiaSelecionado] = useState(11);
@@ -20,7 +23,7 @@ export default function Dashboard() {
     { dia: 'Qui', valor: 5, tarefas: 5 }, 
     { dia: 'Sex', valor: 2, tarefas: 2 },
     { dia: 'Sáb', valor: 1, tarefas: 1 },
-    { dia: 'Dom', valor: 0, tarefas: 0 }, // Se for 0, a barra some
+    { dia: 'Dom', valor: 0, tarefas: 0 }, 
   ];
 
   const meses = ["Janeiro", "Fevereiro", "Março", "Abril", "Maio", "Junho", "Julho", "Agosto", "Setembro", "Outubro", "Novembro", "Dezembro"];
@@ -37,7 +40,6 @@ export default function Dashboard() {
   const diasNoMes = new Date(anoAtual, mesAtual + 1, 0).getDate();
   const primeiroDiaSemana = new Date(anoAtual, mesAtual, 1).getDay(); 
 
-  // Encontra o maior valor (agora o maior é 5)
   const maxValor = Math.max(...dadosSemana.map(d => d.valor), 1);
 
   return (
@@ -47,27 +49,34 @@ export default function Dashboard() {
           <h1 className="text-2xl font-bold">Meus Projetos</h1>
           <p className="text-red-100 text-sm mt-1">Gerencie e acompanhe o progresso de suas equipes.</p>
         </div>
-        <button className="bg-white text-red-600 px-5 py-2.5 rounded-lg font-semibold shadow-sm hover:bg-red-50 transition-colors">
+        <button
+          onClick={() => navigate("/projects/crud")}
+          className="bg-white text-red-600 px-5 py-2.5 rounded-lg font-semibold shadow-sm hover:bg-red-50 transition-colors"
+        >
           + Criar Novo Projeto
         </button>
       </header>
 
       <main className="max-w-7xl mx-auto p-8">
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 mb-8">
-          <CardProjeto titulo="Projeto Alpha" progresso={75} descricao="Desenvolvimento da nova interface." />
-          <CardProjeto titulo="Projeto Beta" progresso={30} descricao="Migração de banco de dados legado." />
-          <CardProjeto titulo="Marketing Q4" progresso={90} descricao="Campanha de lançamento de final de ano." />
+          {projects.map((project) => (
+            <CardProjeto
+              key={project.id}
+              id={project.id}
+              titulo={project.name}
+              descricao={project.description}
+              progresso={project.progress ?? 0}
+            />
+          ))}
         </div>
 
         <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
           
-          {/* GRÁFICO CORRIGIDO E PROPORCIONAL */}
           <div className="bg-white p-6 rounded-xl border border-gray-100 shadow-sm flex flex-col">
             <h2 className="text-lg font-bold text-gray-800 mb-6">Atividade Semanal</h2>
             
             <div className="flex h-64 items-end justify-between gap-4 px-2 border-b border-gray-100 pb-2">
               {dadosSemana.map((item, index) => {
-                // Calcula a altura. Se o valor for maior (5), a barra é maior.
                 const alturaPx = (item.valor / maxValor) * 220;
 
                 return (
@@ -76,7 +85,6 @@ export default function Dashboard() {
                       {item.tarefas} {item.tarefas === 1 ? 'tarefa' : 'tarefas'}
                     </span>
                     
-                    {/* Se a alturaPx for 0 (Dom), a barra fica invisível mas mantém o espaço */}
                     <div 
                       onClick={() => setDiaSemanaExpandido(diaSemanaExpandido === index ? null : index)}
                       className={`w-full max-w-[40px] rounded-t-md cursor-pointer transition-all duration-300 ${
