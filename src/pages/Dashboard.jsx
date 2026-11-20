@@ -1,6 +1,7 @@
 import { useState } from 'react';
 import { useNavigate } from 'react-router';
 import CardProjeto from '../components/dashboard/CardProjeto';
+import ArchiveDialog from '../components/projects/archiving/ArchiveDialog';
 
 const TAREFAS_SIMULADAS = {
   11: ["Reunião de Alinhamento", "Revisar código PR #42"],
@@ -8,22 +9,30 @@ const TAREFAS_SIMULADAS = {
   20: ["Planejamento Sprint 2"]
 };
 
-export default function Dashboard({ projects = [] }) {
+export default function Dashboard({ projects = [], onToggleArchive }) {
   const navigate = useNavigate();
 
   const [mesAtual, setMesAtual] = useState(11); // 11 = Dezembro
   const [anoAtual, setAnoAtual] = useState(2026);
   const [diaSelecionado, setDiaSelecionado] = useState(11);
   const [diaSemanaExpandido, setDiaSemanaExpandido] = useState(null);
+
+  const [projectToArchive, setProjectToArchive] = useState(null);
+  const [showArchived, setShowArchived] = useState(false);
   
+  //Archived and active projects filtering
+  const visibleProjects = projects.filter(
+    (project) => Boolean(project.archived) === showArchived
+  );
+
   const dadosSemana = [
     { dia: 'Seg', valor: 3, tarefas: 3 },
     { dia: 'Ter', valor: 1, tarefas: 1 },
     { dia: 'Qua', valor: 2, tarefas: 2 },
-    { dia: 'Qui', valor: 5, tarefas: 5 }, 
+    { dia: 'Qui', valor: 5, tarefas: 5 },
     { dia: 'Sex', valor: 2, tarefas: 2 },
     { dia: 'Sáb', valor: 1, tarefas: 1 },
-    { dia: 'Dom', valor: 0, tarefas: 0 }, 
+    { dia: 'Dom', valor: 0, tarefas: 0 },
   ];
 
   const meses = ["Janeiro", "Fevereiro", "Março", "Abril", "Maio", "Junho", "Julho", "Agosto", "Setembro", "Outubro", "Novembro", "Dezembro"];
@@ -38,7 +47,7 @@ export default function Dashboard({ projects = [] }) {
   };
 
   const diasNoMes = new Date(anoAtual, mesAtual + 1, 0).getDate();
-  const primeiroDiaSemana = new Date(anoAtual, mesAtual, 1).getDay(); 
+  const primeiroDiaSemana = new Date(anoAtual, mesAtual, 1).getDay();
 
   const maxValor = Math.max(...dadosSemana.map(d => d.valor), 1);
 
@@ -58,23 +67,61 @@ export default function Dashboard({ projects = [] }) {
       </header>
 
       <main className="max-w-7xl mx-auto p-8">
+        <div className="mb-6 flex gap-2" role="tablist" aria-label="Projetos">
+          <button
+            type="button"
+            role="tab"
+            aria-selected={!showArchived}
+            onClick={() => setShowArchived(false)}
+            className={`rounded-lg px-4 py-2 text-sm font-semibold transition-colors ${
+              !showArchived
+                ? 'bg-red-600 text-white'
+                : 'border border-gray-200 bg-white text-gray-600 hover:bg-gray-50'
+            }`}
+          >
+            Ativos ({projects.filter((project) => !project.archived).length})
+          </button>
+          <button
+            type="button"
+            role="tab"
+            aria-selected={showArchived}
+            onClick={() => setShowArchived(true)}
+            className={`rounded-lg px-4 py-2 text-sm font-semibold transition-colors ${
+              showArchived
+                ? 'bg-red-600 text-white'
+                : 'border border-gray-200 bg-white text-gray-600 hover:bg-gray-50'
+            }`}
+          >
+            Arquivados ({projects.filter((project) => project.archived).length})
+          </button>
+        </div>
+
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 mb-8">
-          {projects.map((project) => (
+          {visibleProjects.map((project) => (
             <CardProjeto
               key={project.id}
               id={project.id}
               titulo={project.name}
               descricao={project.description}
               progresso={project.progress ?? 0}
+              archived={project.archived}
+              onArchive={() => setProjectToArchive(project)}
             />
           ))}
+          {visibleProjects.length === 0 && (
+            <p className="col-span-full rounded-xl border border-gray-100 bg-white p-8 text-center text-sm text-gray-500 shadow-sm">
+              {showArchived
+                ? "Não há projetos arquivados."
+                : "Não há projetos ativos."}
+            </p>
+          )}
         </div>
 
         <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
-          
+
           <div className="bg-white p-6 rounded-xl border border-gray-100 shadow-sm flex flex-col">
             <h2 className="text-lg font-bold text-gray-800 mb-6">Atividade Semanal</h2>
-            
+
             <div className="flex h-64 items-end justify-between gap-4 px-2 border-b border-gray-100 pb-2">
               {dadosSemana.map((item, index) => {
                 const alturaPx = (item.valor / maxValor) * 220;
@@ -84,28 +131,28 @@ export default function Dashboard({ projects = [] }) {
                     <span className="text-xs font-bold text-red-500 opacity-0 group-hover:opacity-100 transition-opacity mb-1">
                       {item.tarefas} {item.tarefas === 1 ? 'tarefa' : 'tarefas'}
                     </span>
-                    
-                    <div 
+
+                    <div
                       onClick={() => setDiaSemanaExpandido(diaSemanaExpandido === index ? null : index)}
                       className={`w-full max-w-[40px] rounded-t-md cursor-pointer transition-all duration-300 ${
                         diaSemanaExpandido === index ? 'bg-red-600' : 'bg-red-300 hover:bg-red-400'
                       }`}
-                      style={{ height: `${alturaPx}px` }} 
+                      style={{ height: `${alturaPx}px` }}
                     ></div>
-                    
+
                     <span className="text-xs text-gray-400 mt-2 font-medium">{item.dia}</span>
                   </div>
                 );
               })}
             </div>
-            
+
             <div className="mt-4 min-h-[70px]">
               {diaSemanaExpandido !== null ? (
                 <div className="p-4 bg-red-50 rounded-lg border border-red-100 transition-all duration-300">
                   <h4 className="font-bold text-red-800 text-sm mb-1">Detalhes de {dadosSemana[diaSemanaExpandido].dia}</h4>
                   <p className="text-sm text-red-600">
-                    {dadosSemana[diaSemanaExpandido].tarefas === 0 
-                      ? "Nenhuma tarefa concluída." 
+                    {dadosSemana[diaSemanaExpandido].tarefas === 0
+                      ? "Nenhuma tarefa concluída."
                       : `Você concluiu ${dadosSemana[diaSemanaExpandido].tarefas} tarefas neste dia.`}
                   </p>
                 </div>
@@ -119,7 +166,7 @@ export default function Dashboard({ projects = [] }) {
           <div className="bg-white p-6 rounded-xl border border-gray-100 shadow-sm flex flex-col">
             <div className="flex justify-between items-center mb-6">
               <h2 className="text-lg font-bold text-gray-800">Distribuição de Tarefas</h2>
-              
+
               <div className="flex items-center gap-3 text-gray-600">
                 <button onClick={voltarMes} className="p-1 hover:bg-gray-100 rounded transition-colors font-bold">&lt;</button>
                 <span className="text-sm font-bold min-w-[120px] text-center">
@@ -128,12 +175,12 @@ export default function Dashboard({ projects = [] }) {
                 <button onClick={avancarMes} className="p-1 hover:bg-gray-100 rounded transition-colors font-bold">&gt;</button>
               </div>
             </div>
-            
+
             <div className="grid grid-cols-7 gap-y-2 gap-x-1 text-center text-sm">
               {['Dom','Seg','Ter','Qua','Qui','Sex','Sáb'].map(d => (
                 <div key={d} className="text-gray-400 font-medium mb-2 text-xs">{d}</div>
               ))}
-              
+
               {Array.from({ length: primeiroDiaSemana }).map((_, i) => (
                 <div key={`empty-${i}`} className="h-9"></div>
               ))}
@@ -143,12 +190,12 @@ export default function Dashboard({ projects = [] }) {
                 const isSelected = dia === diaSelecionado;
 
                 return (
-                  <div 
-                    key={dia} 
+                  <div
+                    key={dia}
                     onClick={() => setDiaSelecionado(dia)}
                     className={`relative flex justify-center items-center w-9 h-9 mx-auto rounded-full cursor-pointer transition-all ${
-                      isSelected 
-                        ? 'bg-red-500 text-white font-bold shadow-md shadow-red-200 scale-110' 
+                      isSelected
+                        ? 'bg-red-500 text-white font-bold shadow-md shadow-red-200 scale-110'
                         : 'text-gray-600 hover:bg-red-50 hover:text-red-500'
                     }`}
                   >
@@ -180,6 +227,12 @@ export default function Dashboard({ projects = [] }) {
 
         </div>
       </main>
+
+      <ArchiveDialog
+        project={projectToArchive}
+        onToggleArchive={onToggleArchive}
+        onClose={() => setProjectToArchive(null)}
+      />
     </div>
   );
 }

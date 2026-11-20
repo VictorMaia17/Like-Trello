@@ -39,9 +39,18 @@ function App() {
     })
   }
 
+  function toggleArchive(id) {
+    setProjects((current) =>
+      current.map((p) => (p.id === id ? { ...p, archived: !p.archived } : p))
+    )
+  }
+
   return (
     <Routes>
-      <Route path="/dashboard" element={<Dashboard projects={projects} />} />
+      <Route
+        path="/dashboard"
+        element={<Dashboard projects={projects} onToggleArchive={toggleArchive} />}
+      />
       <Route path="/login" element={<Login />} />
       <Route path="/cadastro" element={<Register />} />
 

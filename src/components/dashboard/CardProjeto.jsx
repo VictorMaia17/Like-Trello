@@ -1,6 +1,6 @@
 import { useNavigate } from "react-router";
 
-export default function CardProjeto({ id, titulo, progresso, descricao }) {
+export default function CardProjeto({ id, titulo, progresso, descricao, archived, onArchive }) {
   const navigate = useNavigate();
 
   const handleAcessar = () => {
@@ -35,8 +35,9 @@ export default function CardProjeto({ id, titulo, progresso, descricao }) {
           </button>
           <button
             type="button"
-            aria-label={`Arquivar ${titulo}`}
-            title={`Arquivar ${titulo}`}
+            onClick={onArchive}
+            aria-label={`${archived ? "Desarquivar" : "Arquivar"} ${titulo}`}
+            title={`${archived ? "Desarquivar" : "Arquivar"} ${titulo}`}
             className="rounded-lg p-2 text-gray-500 transition-colors hover:bg-red-50 hover:text-red-600 focus:outline-none focus:ring-2 focus:ring-red-300"
           >
             <svg
@@ -63,8 +64,8 @@ export default function CardProjeto({ id, titulo, progresso, descricao }) {
         <div className="w-full bg-gray-100 rounded-full h-1.5 mb-4">
           <div className="bg-red-500 h-1.5 rounded-full" style={{ width: `${progresso}%` }}></div>
         </div>
-        
-        <button 
+
+        <button
           onClick={handleAcessar} //navegação
           className="w-full py-2 text-sm font-medium text-gray-600 border border-gray-200 rounded-lg hover:border-red-500 hover:text-red-600 hover:bg-red-50 transition-colors"
         >
