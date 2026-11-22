@@ -85,11 +85,6 @@ export default function Register() {
         const data = await executar(form);
 
         if (data) {
-            // guarda o usuário (SEM a senha) pro login simulado
-            localStorage.setItem(
-                "usuario",
-                JSON.stringify({ ...data, username: form.username, email: form.email })
-            );
             mostrarToast("Cadastro realizado com sucesso!");
             navigate("/login");
         }
