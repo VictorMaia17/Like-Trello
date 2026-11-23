@@ -1,7 +1,7 @@
 import { useState } from 'react';
 import { useNavigate } from 'react-router';
-import CardProjeto from '../components/dashboard/CardProjeto';
-import ArchiveDialog from '../components/projects/archiving/ArchiveDialog';
+import CardProjeto from './CardProjeto';
+import ArchiveDialog from '../projects/archiving/ArchiveDialog';
 
 const TAREFAS_SIMULADAS = {
   11: ["Reunião de Alinhamento", "Revisar código PR #42"],

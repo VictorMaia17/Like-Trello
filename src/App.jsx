@@ -1,9 +1,9 @@
 import { useState } from "react"
 import { Routes, Route, Navigate } from "react-router"
-import Login from "./pages/Login"
-import Register from "./pages/Register"
-import Dashboard from "./pages/Dashboard"
-import PaginaProjeto from "./pages/PaginaProjeto" // Vamos criar essa página
+import Login from "./formPages/Login"
+import Register from "./formPages/Register"
+import Dashboard from "./components/dashboard/Dashboard"
+import PaginaProjeto from "./components/projects/view/PaginaProjeto"
 import CreateProject from "./components/projects/formField/CreateProject"
 import EditProject from "./components/projects/formField/EditProject"
 import "./app.css"
