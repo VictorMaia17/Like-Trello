@@ -65,7 +65,10 @@ function App() {
       />
 
       {/* Rota Dinâmica para o projeto */}
-      <Route path="/projeto/:nome" element={<PaginaProjeto />} />
+      <Route
+        path="/projeto/:nome"
+        element={<PaginaProjeto projects={projects} />}
+      />
 
       <Route path="*" element={<Navigate to="/login" replace />} />
 

@@ -4,11 +4,12 @@ export default function CardProjeto({ id, titulo, progresso, descricao, archived
   const navigate = useNavigate();
 
   const handleAcessar = () => {
-    // navega para a rota
+    if (archived) return;
     navigate(`/projeto/${encodeURIComponent(titulo)}`);
   };
 
   const handleEditar = () => {
+    if (archived) return;
     navigate(`/projects/${id}/edit`);
   };
 
@@ -20,9 +21,10 @@ export default function CardProjeto({ id, titulo, progresso, descricao, archived
           <button
             type="button"
             onClick={handleEditar}
+            disabled={Boolean(archived)}
             aria-label={`Editar ${titulo}`}
             title={`Editar ${titulo}`}
-            className="rounded-lg p-2 text-gray-500 transition-colors hover:bg-red-50 hover:text-red-600 focus:outline-none focus:ring-2 focus:ring-red-300"
+            className="rounded-lg p-2 text-gray-500 transition-colors hover:bg-red-50 hover:text-red-600 focus:outline-none focus:ring-2 focus:ring-red-300 disabled:cursor-not-allowed disabled:opacity-40 disabled:hover:bg-transparent disabled:hover:text-gray-500"
           >
             <svg
               aria-hidden="true"
@@ -66,8 +68,10 @@ export default function CardProjeto({ id, titulo, progresso, descricao, archived
         </div>
 
         <button
-          onClick={handleAcessar} //navegação
-          className="w-full py-2 text-sm font-medium text-gray-600 border border-gray-200 rounded-lg hover:border-red-500 hover:text-red-600 hover:bg-red-50 transition-colors"
+          type="button"
+          onClick={handleAcessar}
+          disabled={Boolean(archived)}
+          className="w-full py-2 text-sm font-medium text-gray-600 border border-gray-200 rounded-lg hover:border-red-500 hover:text-red-600 hover:bg-red-50 transition-colors disabled:cursor-not-allowed disabled:opacity-40 disabled:hover:border-gray-200 disabled:hover:bg-transparent disabled:hover:text-gray-600"
         >
           Acessar Projeto
         </button>

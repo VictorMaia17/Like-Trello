@@ -1,5 +1,5 @@
 import { useState } from "react";
-import { useParams, useNavigate } from "react-router";
+import { Navigate, useParams, useNavigate } from "react-router";
 import { 
   DndContext, 
   closestCorners, 
@@ -116,9 +116,10 @@ function ColunaKanban({ coluna, tarefas }) {
 }
 
 // --- PÁGINA PRINCIPAL ---
-export default function PaginaProjeto() {
-  const { nome } = useParams(); 
+export default function PaginaProjeto({ projects = [] }) {
+  const { nome } = useParams();
   const navigate = useNavigate();
+  const projeto = projects.find((item) => item.name === nome);
   const [abaAtiva, setAbaAtiva] = useState("quadro");
 
   const [tarefas, setTarefas] = useState([
@@ -179,6 +180,10 @@ export default function PaginaProjeto() {
       return arrayMove(novasTarefas, tarefaAtivaIndex, tarefaOverIndex);
     });
   };
+
+  if (!projeto || projeto.archived) {
+    return <Navigate to="/dashboard" replace />;
+  }
 
   return (
     <div className="min-h-screen bg-gray-50 flex flex-col font-sans">

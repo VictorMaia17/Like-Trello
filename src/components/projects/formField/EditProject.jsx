@@ -6,7 +6,9 @@ export default function EditProject({ projects, onSave }) {
     const navigate = useNavigate();
     const project = projects.find((p) => String(p.id) === id);
 
-    if (!project) return <Navigate to="/dashboard" replace />;
+    if (!project || project.archived) {
+        return <Navigate to="/dashboard" replace />;
+    }
 
     return (
         <ProjectForm
