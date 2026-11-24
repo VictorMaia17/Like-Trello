@@ -1,11 +1,7 @@
-<<<<<<< Updated upstream:src/components/projects/view/PaginaProjeto.jsx
-import { useState } from "react";
-import { Navigate, useParams, useNavigate } from "react-router";
-=======
 import { useState, useEffect } from "react";
 import { useParams, useNavigate } from "react-router";
-import api from "../services/api";
->>>>>>> Stashed changes:src/pages/PaginaProjeto.jsx
+// ⚠️ Caminho corrigido para a nova pasta (components/projects/view/)
+import api from "../../../services/api";
 import { 
   DndContext, closestCorners, KeyboardSensor, PointerSensor, useSensor, useSensors, DragOverlay, useDroppable
 } from "@dnd-kit/core";
@@ -93,18 +89,10 @@ function ColunaKanban({ coluna, tarefas, onAdicionarTarefa }) {
   );
 }
 
-<<<<<<< Updated upstream:src/components/projects/view/PaginaProjeto.jsx
-// --- PÁGINA PRINCIPAL ---
-export default function PaginaProjeto({ projects = [] }) {
-  const { nome } = useParams();
-  const navigate = useNavigate();
-  const projeto = projects.find((item) => item.name === nome);
-=======
 export default function PaginaProjeto() {
   const { nome } = useParams(); 
   const navigate = useNavigate();
   
->>>>>>> Stashed changes:src/pages/PaginaProjeto.jsx
   const [abaAtiva, setAbaAtiva] = useState("quadro");
   const [tarefas, setTarefas] = useState([]);
   const [carregando, setCarregando] = useState(true);
@@ -255,10 +243,6 @@ export default function PaginaProjeto() {
       }
     }
   };
-
-  if (!projeto || projeto.archived) {
-    return <Navigate to="/dashboard" replace />;
-  }
 
   return (
     <div className="min-h-screen bg-gray-50 flex flex-col font-sans">

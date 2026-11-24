@@ -1,4 +1,3 @@
-<<<<<<< Updated upstream
 export default function FormField({
     label,
     type,
@@ -7,10 +6,7 @@ export default function FormField({
     value,
     onChange,
     icon = "fa-envelope"
-    }) {
-=======
-export default function FormField({label, type, id, placeholder, icon = "fa-envelope"}) {
->>>>>>> Stashed changes
+}) {
     return (
         <div className="
             flex
@@ -57,11 +53,8 @@ export default function FormField({label, type, id, placeholder, icon = "fa-enve
                     type={type}
                     id={id}
                     placeholder={placeholder}
-<<<<<<< Updated upstream
                     value={value}
                     onChange={onChange}
-=======
->>>>>>> Stashed changes
                     className="
                         h-full
                         flex-1
