@@ -2,6 +2,7 @@ import { useState } from "react";
 import { Link } from "react-router";
 import AuthCard from "../components/authCard/AuthCard";
 import FormField from "../components/formField/FormField";
+import { registerUser } from "../api/userService";
 
 export default function Register() {
 
@@ -19,29 +20,18 @@ export default function Register() {
     };
 
     const handleSubmit = async (e) => {
-    e.preventDefault();
+    
+        e.preventDefault();
 
-    try {
-        const response = await fetch("http://localhost:8080/api/v1/users", {
-            method: "POST",
-            headers: {
-                "Content-Type": "application/json"
-            },
-            body: JSON.stringify(form)
-        });
-
-        if (!response.ok) {
-            throw new Error("Erro ao realizar cadastro");
+        try {
+            const response = await registerUser(form);
+            console.log("Usuário cadastrado!", response);
         }
-
-        const data = await response.json();
-
-        console.log("Cadastro realizado:", data);
-
-    } catch (error) {
-        console.error("Erro:", error);
+        catch (error) {
+            console.error("Erro ao realizar cadastro", error);
+        }
     }
-};
+
     return (
         <div
             className="
