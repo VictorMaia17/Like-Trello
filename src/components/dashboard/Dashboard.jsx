@@ -1,3 +1,4 @@
+<<<<<<< Updated upstream:src/components/dashboard/Dashboard.jsx
 import { useState } from 'react';
 import { useNavigate } from 'react-router';
 import CardProjeto from './CardProjeto';
@@ -232,6 +233,38 @@ export default function Dashboard({ projects = [], onToggleArchive }) {
         project={projectToArchive}
         onToggleArchive={onToggleArchive}
         onClose={() => setProjectToArchive(null)}
+=======
+import { useState } from "react";
+import useProjetos from "../hooks/useProjetos.JS";
+import { ATIVIDADE_SEMANAL, TAREFAS_SIMULADAS } from "../mocks/dashboardMock";
+import DashboardHeader from "../components/dashboard/DashboardHeader";
+import ProjetosGrid from "../components/dashboard/ProjetosGrid";
+import NovoProjetoModal from "../components/dashboard/NovoProjetoModal";
+import GraficoAtividadeSemanal from "../components/dashboard/GraficoAtividadeSemanal";
+import CalendarioTarefas from "../components/dashboard/CalendarioTarefas";
+
+export default function Dashboard() {
+  const { projetos, loading, erro, criar, recarregar } = useProjetos();
+  const [modalAberto, setModalAberto] = useState(false);
+
+  return (
+    <div className="min-h-screen bg-gray-50 font-sans">
+      <DashboardHeader onCriar={() => setModalAberto(true)} />
+
+      <main className="max-w-7xl mx-auto p-8">
+        <ProjetosGrid projetos={projetos} loading={loading} erro={erro} onRetry={recarregar} />
+
+        <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
+          <GraficoAtividadeSemanal dados={ATIVIDADE_SEMANAL} />
+          <CalendarioTarefas tarefasPorDia={TAREFAS_SIMULADAS} />
+        </div>
+      </main>
+
+      <NovoProjetoModal
+        aberto={modalAberto}
+        onFechar={() => setModalAberto(false)}
+        onSalvar={criar}
+>>>>>>> Stashed changes:src/pages/Dashboard.jsx
       />
     </div>
   );

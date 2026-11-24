@@ -1,11 +1,18 @@
 import { useState } from "react"
 import { Routes, Route, Navigate } from "react-router"
+<<<<<<< Updated upstream
 import Login from "./formPages/Login"
 import Register from "./formPages/Register"
 import Dashboard from "./components/dashboard/Dashboard"
 import PaginaProjeto from "./components/projects/view/PaginaProjeto"
 import CreateProject from "./components/projects/formField/CreateProject"
 import EditProject from "./components/projects/formField/EditProject"
+=======
+import Login from "./pages/Login"
+import Register from "./pages/Register"
+import Dashboard from "./pages/Dashboard" 
+import PaginaProjeto from "./pages/PaginaProjeto" 
+>>>>>>> Stashed changes
 import "./app.css"
 
 function App() {
@@ -53,6 +60,7 @@ function App() {
       />
       <Route path="/login" element={<Login />} />
       <Route path="/cadastro" element={<Register />} />
+<<<<<<< Updated upstream
 
       <Route
         path="/projects/crud"
@@ -70,6 +78,12 @@ function App() {
         element={<PaginaProjeto projects={projects} />}
       />
 
+=======
+      
+      {/* Rota Dinâmica para o projeto */}
+      <Route path="/projeto/:nome" element={<PaginaProjeto />} />
+      
+>>>>>>> Stashed changes
       <Route path="*" element={<Navigate to="/login" replace />} />
 
       <Route path="/" element={<Navigate to="/login" replace />} />
