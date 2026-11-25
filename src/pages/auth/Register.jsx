@@ -1,5 +1,6 @@
 import { useState } from "react";
-import { Link } from "react-router";
+import { Link, useNavigate } from "react-router";
+import { registerUser } from "../../services/userService";
 import AuthCard from "../../components/auth/AuthCard";
 import FormField from "../../components/auth/FormField";
 
@@ -18,30 +19,26 @@ export default function Register() {
     }));
     };
 
+     const navigate = useNavigate();
+
     const handleSubmit = async (e) => {
-    e.preventDefault();
 
-    try {
-        const response = await fetch("http://localhost:8080/api/v1/users", {
-            method: "POST",
-            headers: {
-                "Content-Type": "application/json"
-            },
-            body: JSON.stringify(form)
-        });
+        e.preventDefault();
 
-        if (!response.ok) {
-            throw new Error("Erro ao realizar cadastro");
+        try {
+            await registerUser(form);
+
+            navigate("/login", {
+                state: {
+                    message: "Cadastro realizado com sucesso!"
+                }
+            });
+
+        } catch (error) {
+            console.error("Erro:", error);
         }
-
-        const data = await response.json();
-
-        console.log("Cadastro realizado:", data);
-
-    } catch (error) {
-        console.error("Erro:", error);
     }
-};
+    
     return (
         <div
             className="
