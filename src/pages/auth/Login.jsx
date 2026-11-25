@@ -25,7 +25,7 @@ export default function Login(){
 
         try{
             const response = await loginUser(form);
-            setAuthToken(response.acessToken);
+            setAuthToken(response.accessToken);
             console.log("Usuário logado!", response);
         }
         catch (error) {

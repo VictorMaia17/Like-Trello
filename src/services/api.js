@@ -1,23 +1,24 @@
 import axios from 'axios';
+import { getAuthToken } from './storage/auth';
 
-// 1. Cria a instância. O baseURL deve ser a raiz da API (sem o /projects)
 const api = axios.create({
-  baseURL: 'http://localhost:8080/api/v1', 
+    baseURL: 'http://localhost:8080/api/v1',
 });
 
-// 2. Configura o interceptor
-api.interceptors.request.use((config) => {
-  // ATENÇÃO: A chave 'token' aqui deve ser EXATAMENTE a mesma que você usou no localStorage.setItem('token', ...)
-  const token = localStorage.getItem('token'); 
+api.interceptors.request.use(
+    (config) => {
 
-  if (token) {
-    // O Spring Boot geralmente espera o prefixo "Bearer " antes do token
-    config.headers.Authorization = `Bearer ${token}`;
-  }
-  
-  return config;
-}, (error) => {
-  return Promise.reject(error);
-});
+        const token = getAuthToken();
+
+        if (token) {
+            config.headers.Authorization = `Bearer ${token}`;
+        }
+
+        return config;
+    },
+    (error) => {
+        return Promise.reject(error);
+    }
+);
 
 export default api;
