@@ -1,14 +1,11 @@
 import { useState } from "react";
-// ⚠️ CORREÇÃO: Adicionado "../" extra para voltar até a raiz src/
 import useProjetos from "../../hooks/useProjetos.js"; 
-import { ATIVIDADE_SEMANAL, TAREFAS_SIMULADAS } from "../../mocks/dashboardMock";
-
-// ⚠️ CORREÇÃO: Como esses componentes estão na MESMA pasta que o Dashboard.jsx, usamos "./"
-import DashboardHeader from "./DashboardHeader";
-import ProjetosGrid from "./ProjetosGrid";
-import NovoProjetoModal from "./NovoProjetoModal";
-import GraficoAtividadeSemanal from "./GraficoAtividadeSemanal";
-import CalendarioTarefas from "./CalendarioTarefas";
+import { ATIVIDADE_SEMANAL, TAREFAS_SIMULADAS } from "../../mocks/dashboardMock.js";
+import DashboardHeader from "../../components/dashboard/DashboardHeader.jsx";
+import ProjetosGrid from "../../components/dashboard/ProjetosGrid.jsx";
+import NovoProjetoModal from "../../components/dashboard/NovoProjetoModal.jsx";
+import GraficoAtividadeSemanal from "../../components/dashboard/GraficoAtividadeSemanal.jsx";
+import CalendarioTarefas from "../../components/dashboard/CalendarioTarefas.jsx";
 
 export default function Dashboard() {
   const { projetos, loading, erro, criar, recarregar } = useProjetos();

@@ -1,7 +1,7 @@
 import { Link } from "react-router"
 
-import AuthCard from "../components/authCard/AuthCard";
-import FormField from "../components/formField/FormField";
+import AuthCard from "../../components/auth/AuthCard";
+import FormField from "../../components/auth/FormField";
 
 export default function Login(){
     return(

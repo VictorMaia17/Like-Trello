@@ -1,7 +1,7 @@
 import { useState, useEffect } from "react";
 import { useParams, useNavigate } from "react-router";
 // ⚠️ Caminho corrigido para a nova pasta (components/projects/view/)
-import api from "../../../services/api";
+import api from "../../services/api";
 import { 
   DndContext, closestCorners, KeyboardSensor, PointerSensor, useSensor, useSensors, DragOverlay, useDroppable
 } from "@dnd-kit/core";
