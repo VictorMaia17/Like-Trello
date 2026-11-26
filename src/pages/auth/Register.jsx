@@ -1,36 +1,34 @@
 import { useState } from "react";
 import { Link, useNavigate } from "react-router";
-import AuthCard from "../components/authCard/AuthCard";
-import FormField from "../components/formField/FormField";
-import Spinner from "../components/ui/Spinner";
-import ErrorMessage from "../components/ui/ErrorMessage";
+import { registerUser } from "../../services/userService";
 import { useAsync } from "../hooks/useAsync";
 import { useToast } from "../hooks/useToast";
+import AuthCard from "../../components/auth/AuthCard";
+import FormField from "../../components/auth/FormField";
+import Spinner from "../components/ui/Spinner";
+import ErrorMessage from "../components/ui/ErrorMessage";
 
-// Fica FORA do componente (o useAsync precisa de uma função que não muda a cada renderização)
-async function enviarCadastro(dados) {
-    let response;
-    try {
-        response = await fetch("http://localhost:8080/api/v1/users", {
-            method: "POST",
-            headers: {
-                "Content-Type": "application/json"
-            },
-            body: JSON.stringify(dados)
-        });
-    } catch {
-        throw new Error("Não foi possível conectar ao servidor. Verifique sua conexão e tente novamente.");
-    }
+export default function Register() {
+    const { mostrarToast } = useToast();
+    const { executar, loading, erro: erroApi } = useAsync(enviarCadastro);
 
-    if (!response.ok) {
-        throw new Error(`Erro ao realizar cadastro (código ${response.status}). Tente novamente.`);
-    }
+    const [form, setForm] = useState({
+        username: "",
+        email: "",
+        password: ""
+    });
+    const [errosCampos, setErrosCampos] = useState({});
 
-    // se a API não devolver corpo, devolve um objeto vazio pra não contar como erro
-    return response.json().catch(() => ({}));
-}
+    const handleFormChange = (field) => (e) => {
+        setForm((prev) => ({
+            ...prev,
+            [field]: e.target.value,
+        }));
+        // some com o erro do campo assim que a pessoa volta a digitar
+        setErrosCampos((prev) => ({ ...prev, [field]: undefined }));
+    };
 
-function validar({ username, email, password }) {
+     function validar({ username, email, password }) {
     const erros = {};
 
     if (!username.trim()) {
@@ -54,42 +52,33 @@ function validar({ username, email, password }) {
     return erros;
 }
 
-export default function Register() {
     const navigate = useNavigate();
-    const { mostrarToast } = useToast();
-    const { executar, loading, erro: erroApi } = useAsync(enviarCadastro);
 
-    const [form, setForm] = useState({
-        username: "",
-        email: "",
-        password: ""
-    });
-    const [errosCampos, setErrosCampos] = useState({});
-
-    const handleFormChange = (field) => (e) => {
-        setForm((prev) => ({
-            ...prev,
-            [field]: e.target.value,
-        }));
-        // some com o erro do campo assim que a pessoa volta a digitar
-        setErrosCampos((prev) => ({ ...prev, [field]: undefined }));
-    };
 
     const handleSubmit = async (e) => {
+
         e.preventDefault();
 
-        const novosErros = validar(form);
-        setErrosCampos(novosErros);
-        if (Object.keys(novosErros).length > 0) return;
+        try 
+        {
 
-        const data = await executar(form);
+            const novosErros = validar(form);
+            setErrosCampos(novosErros);
+            if (Object.keys(novosErros).length > 0) return;
 
-        if (data) {
-            mostrarToast("Cadastro realizado com sucesso!");
-            navigate("/login");
+            await registerUser(form);
+
+            navigate("/login", {
+                state: {
+                    message: "Cadastro realizado com sucesso!"
+                }
+            });
+
+        } catch (error) {
+            console.error("Erro:", error);
         }
-    };
-
+    }
+    
     return (
         <div
             className="
