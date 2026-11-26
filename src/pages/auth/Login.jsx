@@ -1,6 +1,6 @@
 import { useState } from "react"
 import { loginUser } from "../../services/userService";
-import { Link } from "react-router"
+import { Link,  useNavigate } from "react-router"
 import AuthCard from "../../components/auth/AuthCard";
 import FormField from "../../components/auth/FormField";
 import { setAuthToken } from "../../services/storage/auth";
@@ -19,6 +19,9 @@ export default function Login(){
     }));
     };
 
+    const navigate = useNavigate();
+    const destination = location.state?.from?.pathname || "/dashboard";
+
     const handleSubmit = async (e) => {
 
         e.preventDefault();
@@ -27,6 +30,7 @@ export default function Login(){
             const response = await loginUser(form);
             setAuthToken(response.accessToken);
             console.log("Usuário logado!", response);
+            navigate(destination);
         }
         catch (error) {
             console.error("Erro ao realizar login", error);

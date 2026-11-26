@@ -7,6 +7,8 @@ import PaginaProjeto from "./pages/projeto/PaginaProjeto"
 import CreateProject from "./components/projects/formField/CreateProject"
 import EditProject from "./components/projects/formField/EditProject"
 import "./app.css"
+import ProtectedRoute from "./components/protectedRoute/ProtectedRoute"
+import PublicRoute from "./components/publicRoute/PublicRoute"
 
 function App() {
   const [projects, setProjects] = useState([
@@ -47,32 +49,42 @@ function App() {
 
   return (
     <Routes>
-      <Route
-        path="/dashboard"
-        element={<Dashboard projects={projects} onToggleArchive={toggleArchive} />}
-      />
-      <Route path="/login" element={<Login />} />
-      <Route path="/cadastro" element={<Register />} />
 
-      <Route
-        path="/projects/crud"
-        element={<CreateProject onSave={saveProject} />}
-      />
+      <Route element={<PublicRoute />}>
 
-      <Route
-        path="/projects/:id/edit"
-        element={<EditProject projects={projects} onSave={saveProject} />}
-      />
+        <Route path="/login" element={<Login />} />
+        <Route path="/cadastro" element={<Register />} />
 
-      {/* Rota Dinâmica para o projeto */}
-      <Route
-        path="/projeto/:nome"
-        element={<PaginaProjeto projects={projects} />}
-      />
+      </Route>
 
-      <Route path="*" element={<Navigate to="/login" replace />} />
+      <Route element={<ProtectedRoute/>}>
 
-      <Route path="/" element={<Navigate to="/login" replace />} />
+        <Route
+          path="/dashboard"
+          element={<Dashboard projects={projects} onToggleArchive={toggleArchive} />}
+        />  
+
+        <Route
+          path="/projects/crud"
+          element={<CreateProject onSave={saveProject} />}
+        />
+
+        <Route
+          path="/projects/:id/edit"
+          element={<EditProject projects={projects} onSave={saveProject} />}
+        />
+
+        {/* Rota Dinâmica para o projeto */}
+        <Route
+          path="/projeto/:nome"
+          element={<PaginaProjeto projects={projects} />}
+        />
+
+      <Route path="*" element={<Navigate to="/dashboard" replace />} />
+      <Route path="/" element={<Navigate to="/dashboard" replace />} />
+
+      </Route>
+
     </Routes>
   )
 }
