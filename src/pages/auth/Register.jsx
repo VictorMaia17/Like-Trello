@@ -1,7 +1,7 @@
 import { useState } from "react";
 import { Link, useNavigate } from "react-router";
 import { registerUser } from "../../services/userService";
-import { useAsync } from "../hooks/useAsync";
+import { useAsync } from "../../hooks/useAsync";
 import { useToast } from "../hooks/useToast";
 import AuthCard from "../../components/auth/AuthCard";
 import FormField from "../../components/auth/FormField";
@@ -24,11 +24,10 @@ export default function Register() {
             ...prev,
             [field]: e.target.value,
         }));
-        // some com o erro do campo assim que a pessoa volta a digitar
         setErrosCampos((prev) => ({ ...prev, [field]: undefined }));
     };
 
-     function validar({ username, email, password }) {
+     function validate({ username, email, password }) {
     const erros = {};
 
     if (!username.trim()) {
@@ -62,7 +61,7 @@ export default function Register() {
         try 
         {
 
-            const novosErros = validar(form);
+            const novosErros = validate(form);
             setErrosCampos(novosErros);
             if (Object.keys(novosErros).length > 0) return;
 
