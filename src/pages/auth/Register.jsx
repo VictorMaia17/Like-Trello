@@ -1,83 +1,89 @@
+
 import { useState } from "react";
 import { Link, useNavigate } from "react-router";
+
 import { registerUser } from "../../services/userService";
 import { useAsync } from "../../hooks/useAsync";
-import { useToast } from "../hooks/useToast";
+import { useToast } from "../../hooks/useToast";
+
 import AuthCard from "../../components/auth/AuthCard";
 import FormField from "../../components/auth/FormField";
-import Spinner from "../components/ui/Spinner";
-import ErrorMessage from "../components/ui/ErrorMessage";
+import Spinner from "../../components/ui/Spinner";
+import ErrorMessage from "../../components/ui/ErrorMessage";
+
+function validateForm({ username, email, password }) {
+    const errors = {};
+
+    if (!username.trim()) {
+        errors.username = "Informe um nome de usuário.";
+    } else if (username.trim().length < 3) {
+        errors.username = "O usuário precisa ter pelo menos 3 caracteres.";
+    }
+
+    if (!email.trim()) {
+        errors.email = "Informe seu e-mail.";
+    } else if (!/^\S+@\S+\.\S+$/.test(email)) {
+        errors.email = "E-mail inválido.";
+    }
+
+    if (!password) {
+        errors.password = "Informe uma senha.";
+    } else if (password.length < 6) {
+        errors.password = "A senha precisa ter pelo menos 6 caracteres.";
+    }
+
+    return errors;
+}
 
 export default function Register() {
-    const { mostrarToast } = useToast();
-    const { executar, loading, erro: erroApi } = useAsync(enviarCadastro);
+    const navigate = useNavigate();
+
+    const { showToast } = useToast();
+
+    const {
+        executar: execute,
+        loading,
+        erro: apiError
+    } = useAsync(registerUser);
 
     const [form, setForm] = useState({
         username: "",
         email: "",
         password: ""
     });
-    const [errosCampos, setErrosCampos] = useState({});
+
+    const [fieldErrors, setFieldErrors] = useState({});
 
     const handleFormChange = (field) => (e) => {
         setForm((prev) => ({
             ...prev,
-            [field]: e.target.value,
+            [field]: e.target.value
         }));
-        setErrosCampos((prev) => ({ ...prev, [field]: undefined }));
+
+        setFieldErrors((prev) => ({
+            ...prev,
+            [field]: undefined
+        }));
     };
 
-     function validate({ username, email, password }) {
-    const erros = {};
-
-    if (!username.trim()) {
-        erros.username = "Informe um nome de usuário.";
-    } else if (username.trim().length < 3) {
-        erros.username = "O usuário precisa ter pelo menos 3 caracteres.";
-    }
-
-    if (!email.trim()) {
-        erros.email = "Informe seu e-mail.";
-    } else if (!/^\S+@\S+\.\S+$/.test(email)) {
-        erros.email = "E-mail inválido.";
-    }
-
-    if (!password) {
-        erros.password = "Informe uma senha.";
-    } else if (password.length < 6) {
-        erros.password = "A senha precisa ter pelo menos 6 caracteres.";
-    }
-
-    return erros;
-}
-
-    const navigate = useNavigate();
-
-
     const handleSubmit = async (e) => {
-
         e.preventDefault();
 
-        try 
-        {
+        const validationErrors = validateForm(form);
 
-            const novosErros = validate(form);
-            setErrosCampos(novosErros);
-            if (Object.keys(novosErros).length > 0) return;
+        setFieldErrors(validationErrors);
 
-            await registerUser(form);
+        if (Object.keys(validationErrors).length > 0) return;
 
-            navigate("/login", {
-                state: {
-                    message: "Cadastro realizado com sucesso!"
-                }
-            });
+        const result = await execute(form);
 
-        } catch (error) {
-            console.error("Erro:", error);
+        if (result !== undefined) {
+            showToast("Cadastro realizado com sucesso!");
+
+            navigate("/login");
         }
-    }
-    
+    };
+
     return (
         <div
             className="
@@ -85,10 +91,12 @@ export default function Register() {
                 items-center
                 justify-center
                 bg-red-500
-                min-h-screen"
+                min-h-screen
+            "
         >
             <AuthCard>
                 <form onSubmit={handleSubmit} noValidate className="w-full">
+
                     <FormField
                         label="usuário"
                         type="text"
@@ -97,7 +105,7 @@ export default function Register() {
                         value={form.username}
                         onChange={handleFormChange("username")}
                         icon="fa-user"
-                        error={errosCampos.username}
+                        error={fieldErrors.username}
                         disabled={loading}
                     />
 
@@ -109,7 +117,7 @@ export default function Register() {
                         value={form.email}
                         onChange={handleFormChange("email")}
                         icon="fa-envelope"
-                        error={errosCampos.email}
+                        error={fieldErrors.email}
                         disabled={loading}
                     />
 
@@ -121,13 +129,13 @@ export default function Register() {
                         value={form.password}
                         onChange={handleFormChange("password")}
                         icon="fa-lock"
-                        error={errosCampos.password}
+                        error={fieldErrors.password}
                         disabled={loading}
                     />
 
-                    {erroApi && (
+                    {apiError && (
                         <div className="mt-3">
-                            <ErrorMessage mensagem={erroApi} />
+                            <ErrorMessage mensagem={apiError} />
                         </div>
                     )}
 
@@ -156,7 +164,10 @@ export default function Register() {
                     >
                         {loading ? (
                             <>
-                                <Spinner tamanho="h-4 w-4" cor="border-white/40 border-t-white" />
+                                <Spinner
+                                    tamanho="h-4 w-4"
+                                    cor="border-white/40 border-t-white"
+                                />
                                 CADASTRANDO...
                             </>
                         ) : (

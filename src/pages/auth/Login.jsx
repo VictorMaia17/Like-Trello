@@ -4,6 +4,7 @@ import { Link,  useNavigate } from "react-router"
 import AuthCard from "../../components/auth/AuthCard";
 import FormField from "../../components/auth/FormField";
 import { setAuthToken } from "../../services/storage/auth";
+import { useToast } from "../../hooks/useToast";
 
 export default function Login(){
 
@@ -11,6 +12,8 @@ export default function Login(){
         email: "",
         password: ""
     });
+
+    const { showToast } = useToast();
 
     const handleFormChange = (field) => (e) => {
     setForm((prev) => ({
@@ -30,6 +33,8 @@ export default function Login(){
             const response = await loginUser(form);
             setAuthToken(response.accessToken);
             console.log("Usuário logado!", response);
+            showToast("Cadastro realizado com sucesso!");
+
             navigate(destination);
         }
         catch (error) {
